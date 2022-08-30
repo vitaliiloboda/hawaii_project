@@ -1,20 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
-
-class User(AbstractUser):
-
-    OWNER = 0
-    CAMERA = 1
-    GUEST = 2
-
-    NOTE = (
-        (OWNER, 'owner'),
-        (CAMERA, 'camera'),
-        (GUEST, 'guest'),
-    )
-
-    role = models.IntegerField(choices=NOTE, verbose_name='role')
+from django.contrib.auth.models import User
 
 
 class Meeting(models.Model):
@@ -30,5 +16,16 @@ class MeetingImages(models.Model):
 
 
 class UsersInMeeting(models.Model):
+    OWNER = 0
+    CAMERA = 1
+    GUEST = 2
+
+    NOTE = (
+        (OWNER, 'owner'),
+        (CAMERA, 'camera'),
+        (GUEST, 'guest'),
+    )
+
+    role = models.IntegerField(choices=NOTE, verbose_name='role')
     meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
