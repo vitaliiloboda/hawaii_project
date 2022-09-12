@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Meeting, MeetingImages, UsersInMeeting, User
+from meeting.models import Meeting, MeetingImages, UsersInMeeting, User
 
 
 class MeetingSerializer(serializers.ModelSerializer):

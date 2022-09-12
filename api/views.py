@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets, generics
 from .serializers import MeetingSerializer, MeetingImagesSerializer, UsersInMeetingSerializer
-from .models import Meeting, MeetingImages, UsersInMeeting
+from meeting.models import Meeting, MeetingImages, UsersInMeeting
 from rest_framework import permissions
 
 
