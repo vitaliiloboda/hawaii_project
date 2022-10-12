@@ -39,3 +39,8 @@ class UsersInMeeting(models.Model):
 
     def __str__(self):
         return f'{self.meeting.name} users'
+
+
+class Layer(models.Model):
+    meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='meeting_layers', verbose_name='meeting layer', blank=True)
