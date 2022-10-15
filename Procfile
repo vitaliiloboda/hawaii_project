@@ -1,1 +1,0 @@
-web: gunicorn hawaii_project.wsgi
