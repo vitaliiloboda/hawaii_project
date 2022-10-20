@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'mainapp',
     'channels',
     'rest_framework',
+    'corsheaders',
     # 'rest_framework.authtoken'
     'api',
     'meeting',
@@ -145,7 +146,7 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=2),
 }
 
-CORS_ORIGIN_WHITELIST = [
+CORS_ORIGIN_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:8080",
