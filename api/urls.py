@@ -22,7 +22,8 @@ urlpatterns = [
     path('images/create/', MeetingImagesCreate.as_view()),
     path('images/update/<int:pk>', MeetingImagesUpdate.as_view()),
     path('images/delete/<int:pk>', MeetingImagesDelete.as_view()),
-    path('users-in-meeting/create/', UsersInMeetingCreate.as_view()),
-    path('users-in-meeting/update/<int:pk>', UsersInMeetingUpdate.as_view()),
-    path('users-in-meeting/delete/<int:pk>', UsersInMeetingDelete.as_view()),
+    # uim = users in meeting
+    path('uim/create/', UsersInMeetingCreate.as_view()),
+    path('uim/update/<int:pk>', UsersInMeetingUpdate.as_view()),
+    path('uim/delete/<int:pk>', UsersInMeetingDelete.as_view()),
 ]

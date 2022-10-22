@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from requests import Response
 from rest_framework import viewsets, generics
 from .serializers import MeetingSerializer, MeetingImagesSerializer, UsersInMeetingSerializer, UserSerializer
 from meeting.models import Meeting, MeetingImages, UsersInMeeting, User
@@ -33,9 +34,10 @@ class MeetingDelete(generics.DestroyAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    serializer_class = UserSerializer
+# class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(generics.ListAPIView):
     queryset = User.objects.all()
+    serializer_class = UserSerializer
     # if uncommented any user has access to API
     permission_classes = [permissions.AllowAny]
 
@@ -101,6 +103,18 @@ class UsersInMeetingCreate(generics.CreateAPIView):
     serializer_class = UsersInMeetingSerializer
     # if uncommented any user has access to API
     permission_classes = [permissions.AllowAny]
+
+    # def post(self, request, format=None):
+    #     return Response("ok")
+
+
+    # def allowed_methods(self):
+    #     """
+    #     Return the list of allowed HTTP methods, uppercased.
+    #     """
+    #     self.http_method_names.append("post")
+    #     return [method.upper() for method in self.http_method_names
+    #             if hasattr(self, method)]
 
 
 class UsersInMeetingUpdate(generics.RetrieveUpdateAPIView):
