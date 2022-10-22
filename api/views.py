@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets, generics
-from .serializers import MeetingSerializer, MeetingImagesSerializer, UsersInMeetingSerializer
-from meeting.models import Meeting, MeetingImages, UsersInMeeting
+from .serializers import MeetingSerializer, MeetingImagesSerializer, UsersInMeetingSerializer, UserSerializer
+from meeting.models import Meeting, MeetingImages, UsersInMeeting, User
 from rest_framework import permissions
 
 
@@ -29,6 +29,34 @@ class MeetingUpdate(generics.RetrieveUpdateAPIView):
 class MeetingDelete(generics.DestroyAPIView):
     queryset = Meeting.objects.all()
     serializer_class = MeetingSerializer
+    # if uncommented any user has access to API
+    permission_classes = [permissions.AllowAny]
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    # if uncommented any user has access to API
+    permission_classes = [permissions.AllowAny]
+
+
+class UserCreate(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    # if uncommented any user has access to API
+    permission_classes = [permissions.AllowAny]
+
+
+class UserUpdate(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    # if uncommented any user has access to API
+    permission_classes = [permissions.AllowAny]
+
+
+class UserDelete(generics.DestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
     # if uncommented any user has access to API
     permission_classes = [permissions.AllowAny]
 

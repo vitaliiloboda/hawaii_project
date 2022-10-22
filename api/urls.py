@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import MeetingViewSet, MeetingImagesViewSet, UsersInMeetingViewSet, MeetingCreate, MeetingUpdate, \
     MeetingDelete, MeetingImagesCreate, MeetingImagesDelete, MeetingImagesUpdate, UsersInMeetingCreate, \
-    UsersInMeetingDelete, UsersInMeetingUpdate
+    UsersInMeetingDelete, UsersInMeetingUpdate, UserViewSet, UserCreate, UserUpdate, UserDelete
 
 app_name = 'api'
 
@@ -16,6 +16,9 @@ urlpatterns = [
     path('meeting/create/', MeetingCreate.as_view()),
     path('meeting/update/<int:pk>', MeetingUpdate.as_view()),
     path('meeting/delete/<int:pk>', MeetingDelete.as_view()),
+    path('user/create/', UserCreate.as_view()),
+    path('user/update/<int:pk>', UserUpdate.as_view()),
+    path('user/delete/<int:pk>', UserDelete.as_view()),
     path('images/create/', MeetingImagesCreate.as_view()),
     path('images/update/<int:pk>', MeetingImagesUpdate.as_view()),
     path('images/delete/<int:pk>', MeetingImagesDelete.as_view()),
