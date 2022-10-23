@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import datetime
 
 
 class Meeting(models.Model):
@@ -12,6 +13,10 @@ class Meeting(models.Model):
 
     def __str__(self):
         return self.name
+
+    def end_meeting(self):
+        self.end_time = datetime.now()
+        self.save()
 
 
 class MeetingImages(models.Model):
