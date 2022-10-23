@@ -1,9 +1,13 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 from requests import Response
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
 from .serializers import MeetingSerializer, MeetingImagesSerializer, UsersInMeetingSerializer, UserSerializer
 from meeting.models import Meeting, MeetingImages, UsersInMeeting, User
 from rest_framework import permissions
+from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
 
 
 class MeetingViewSet(viewsets.ModelViewSet):
@@ -129,3 +133,14 @@ class UsersInMeetingDelete(generics.DestroyAPIView):
     serializer_class = UsersInMeetingSerializer
     # if uncommented any user has access to API
     permission_classes = [permissions.AllowAny]
+
+
+class MeetingEnd(APIView):
+    # if uncommented any user has access to API
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, pk):
+        meeting_id = pk
+        meeting = get_object_or_404(Meeting, pk=meeting_id)
+        meeting.end_meeting()
+        return Response(status=status.HTTP_200_OK)
