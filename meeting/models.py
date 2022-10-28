@@ -6,7 +6,6 @@ from datetime import datetime
 class Meeting(models.Model):
     name = models.CharField(max_length=200, verbose_name='meeting name', default='random_meeting')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='meeting owner')
-    url = models.CharField(max_length=300, verbose_name='meeting link')
     start_time = models.DateTimeField(auto_now_add=True, verbose_name='meeting start time')
     end_time = models.DateTimeField(blank=True, null=True)
     password = models.CharField(max_length=50, verbose_name='meeting password', default='mypassword')
