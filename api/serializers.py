@@ -9,7 +9,7 @@ class MeetingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Meeting
-        fields = ('id', 'owner', 'url', 'start_time', 'end_time', 'name')
+        fields = ('id', 'owner', 'url', 'start_time', 'name')
 
 
 class MeetingImagesSerializer(serializers.ModelSerializer):
