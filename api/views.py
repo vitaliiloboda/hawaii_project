@@ -27,9 +27,9 @@ class MeetingCreate(generics.CreateAPIView):
 
     def post(self, request):
         print(self.request.user)
-        request.data._mutable = True
+        # request.data._mutable = True
         request.data['owner'] = str(request.user.id)
-        request.data._mutable = False
+        # request.data._mutable = False
         serializer = MeetingSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -136,25 +136,6 @@ class UsersInMeetingViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
 
 
-class UsersInMeetingCreate(generics.CreateAPIView):
-    queryset = UsersInMeeting.objects.all()
-    serializer_class = UsersInMeetingSerializer
-    # if uncommented any user has access to API
-    permission_classes = [permissions.AllowAny]
-
-    # def post(self, request, format=None):
-    #     return Response("ok")
-
-
-    # def allowed_methods(self):
-    #     """
-    #     Return the list of allowed HTTP methods, uppercased.
-    #     """
-    #     self.http_method_names.append("post")
-    #     return [method.upper() for method in self.http_method_names
-    #             if hasattr(self, method)]
-
-
 class UsersInMeetingUpdate(generics.RetrieveUpdateAPIView):
     queryset = UsersInMeeting.objects.all()
     serializer_class = UsersInMeetingSerializer
@@ -180,7 +161,7 @@ class MeetingEnd(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class AddUserInMeeting(APIView):
+class UsersInMeetingAdd(APIView):
     serializer_class = UsersInMeetingSerializer
     queryset = UsersInMeeting.objects.all()
 
@@ -196,12 +177,11 @@ class AddUserInMeeting(APIView):
         ),
     )
     def post(self, request):
-        request.data._mutable = True
+        # request.data._mutable = True
         request.data['user'] = str(request.user.id)
-        request.data._mutable = False
+        # request.data._mutable = False
         serializer = UsersInMeetingSerializer(data=request.data)
         if serializer.is_valid():
-            print(request.data)
             try:
                 if serializer.validated_data['meeting'].password == request.data['password']:
                     serializer.save()

@@ -49,6 +49,10 @@ class UsersInMeetingSerializer(serializers.ModelSerializer):
             UniqueTogetherValidator(
                 queryset=UsersInMeeting.objects.exclude(role=2),
                 fields=['meeting', 'role']
+            ),
+            UniqueTogetherValidator(
+                queryset=UsersInMeeting.objects.all(),
+                fields=['meeting', 'user']
             )
         ]
 
