@@ -3,6 +3,7 @@ from django.shortcuts import render
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, generics, status
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from .serializers import MeetingSerializer, MeetingImagesSerializer, UsersInMeetingSerializer
 from meeting.models import Meeting, MeetingImages, UsersInMeeting
 from requests import Response
@@ -33,6 +34,15 @@ class MeetingCreate(generics.CreateAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MeetingList(ListAPIView):
+    queryset = Meeting.objects.all()
+    serializer_class = MeetingSerializer
+
+    def get_queryset(self):
+        queryset = Meeting.objects.filter(user__user=self.request.user)
+        return queryset
 
 
 class MeetingUpdate(generics.RetrieveUpdateAPIView):
