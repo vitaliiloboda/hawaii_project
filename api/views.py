@@ -10,6 +10,7 @@ from requests import Response
 from rest_framework import viewsets, generics
 from .serializers import (MeetingSerializer,
                           MeetingCreateSerializer,
+                          MeetingRetrieveSerializer,
                           MeetingImagesSerializer,
                           UsersInMeetingSerializer,
                           UserSerializer)
@@ -47,7 +48,7 @@ class MeetingList(ListAPIView):
 
 class MeetingRetrieve(RetrieveAPIView):
     queryset = Meeting.objects.all()
-    serializer_class = MeetingSerializer
+    serializer_class = MeetingRetrieveSerializer
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()

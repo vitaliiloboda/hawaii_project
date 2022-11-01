@@ -22,7 +22,15 @@ class MeetingImagesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MeetingImages
-        fields = ('id', 'meeting', 'image')  # if needed all fields '__all__'
+        fields = ['image']  # if needed all fields '__all__'
+
+
+class MeetingRetrieveSerializer(serializers.ModelSerializer):
+    images = MeetingImagesSerializer(many=True)
+
+    class Meta:
+        model = Meeting
+        fields = ('__all__')
 
 
 class UserSerializer(serializers.ModelSerializer):
