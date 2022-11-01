@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from drf_yasg import openapi
@@ -43,6 +45,21 @@ class MeetingList(ListAPIView):
     def get_queryset(self):
         queryset = Meeting.objects.filter(user__user=self.request.user)
         return queryset
+
+
+class MeetingRetrieve(RetrieveAPIView):
+    queryset = Meeting.objects.all()
+    serializer_class = MeetingSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        pprint(self.request.user)
+        pprint(instance.users.filter(user=self.request.user))
+        if not instance.users.filter(user=self.request.user):
+            print('+')
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 class MeetingUpdate(generics.RetrieveUpdateAPIView):
