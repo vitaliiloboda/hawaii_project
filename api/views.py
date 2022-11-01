@@ -181,7 +181,7 @@ class MeetingEnd(APIView):
 
 class AddUserInMeeting(APIView):
     serializer_class = UsersInMeetingSerializer
-    # queryset = UsersInMeeting.objects.all()
+    queryset = UsersInMeeting.objects.all()
 
     @swagger_auto_schema(
         request_body=openapi.Schema(
@@ -210,7 +210,3 @@ class AddUserInMeeting(APIView):
             except KeyError:
                 Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-    def get_queryset(self):
-        return UsersInMeeting.objects.all()
