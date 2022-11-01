@@ -37,9 +37,22 @@ class UsersInMeeting(models.Model):
         (GUEST, 'guest'),
     )
 
-    role = models.IntegerField(choices=NOTE, verbose_name='role')
-    meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    role = models.IntegerField(
+        choices=NOTE,
+        verbose_name='role'
+    )
+    meeting = models.ForeignKey(
+        Meeting,
+        related_name='users',
+        related_query_name='user',
+        on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        User,
+        related_name='meetings',
+        related_query_name='meeting',
+        on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return f'{self.meeting.name} users'
