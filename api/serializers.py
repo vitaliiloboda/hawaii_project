@@ -4,12 +4,18 @@ from rest_framework.validators import UniqueTogetherValidator
 from meeting.models import Meeting, MeetingImages, UsersInMeeting, User
 
 
-class MeetingSerializer(serializers.ModelSerializer):
-    owner = serializers.SlugRelatedField(slug_field="username", queryset=User.objects.all())
+class MeetingCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Meeting
-        fields = ('id', 'owner', 'url', 'start_time', 'name')
+        fields = ('id', 'owner', 'name', 'password')
+
+
+class MeetingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Meeting
+        fields = ('__all__')
 
 
 class MeetingImagesSerializer(serializers.ModelSerializer):

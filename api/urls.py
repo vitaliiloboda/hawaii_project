@@ -1,13 +1,12 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import MeetingViewSet, MeetingImagesViewSet, UsersInMeetingViewSet, MeetingCreate, MeetingUpdate, \
+from .views import MeetingImagesViewSet, UsersInMeetingViewSet, MeetingCreate, MeetingUpdate, \
     MeetingDelete, MeetingImagesCreate, MeetingImagesDelete, MeetingImagesUpdate, UsersInMeetingCreate, \
     UsersInMeetingDelete, UsersInMeetingUpdate, UserViewSet, UserCreate, UserUpdate, UserDelete, MeetingEnd
 
 app_name = 'api'
 
 router = DefaultRouter()
-router.register('meetings', MeetingViewSet, basename='meetings')
 router.register('images', MeetingImagesViewSet, basename='images')
 router.register('users-in-meeting', UsersInMeetingViewSet, basename='users-in-meeting')
 
