@@ -4,10 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import viewsets, generics, status
+from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from .serializers import MeetingSerializer, MeetingImagesSerializer, UsersInMeetingSerializer
-from meeting.models import Meeting, MeetingImages, UsersInMeeting
 from requests import Response
 from rest_framework import viewsets, generics
 from .serializers import (MeetingSerializer,
@@ -53,10 +51,7 @@ class MeetingRetrieve(RetrieveAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        pprint(self.request.user)
-        pprint(instance.users.filter(user=self.request.user))
         if not instance.users.filter(user=self.request.user):
-            print('+')
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
