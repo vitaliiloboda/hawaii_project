@@ -13,12 +13,40 @@ from .serializers import (MeetingSerializer,
                           MeetingRetrieveSerializer,
                           MeetingImagesSerializer,
                           UsersInMeetingSerializer,
-                          UserSerializer)
+                          UserCreateSerializer)
 from meeting.models import Meeting, MeetingImages, UsersInMeeting, User
 from rest_framework import permissions
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
+
+
+# class UserViewSet(generics.ListAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+#     # if uncommented any user has access to API
+#     permission_classes = [permissions.AllowAny]
+
+
+class UserCreate(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserCreateSerializer
+    # if uncommented any user has access to API
+    permission_classes = [permissions.AllowAny]
+
+
+# class UserUpdate(generics.RetrieveUpdateAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+#     # if uncommented any user has access to API
+#     permission_classes = [permissions.AllowAny]
+#
+#
+# class UserDelete(generics.DestroyAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+#     # if uncommented any user has access to API
+#     permission_classes = [permissions.AllowAny]
 
 
 class MeetingCreate(generics.CreateAPIView):
@@ -68,35 +96,6 @@ class MeetingUpdate(generics.RetrieveUpdateAPIView):
 class MeetingDelete(generics.DestroyAPIView):
     queryset = Meeting.objects.all()
     serializer_class = MeetingSerializer
-    # if uncommented any user has access to API
-    permission_classes = [permissions.AllowAny]
-
-
-# class UserViewSet(viewsets.ModelViewSet):
-class UserViewSet(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    # if uncommented any user has access to API
-    permission_classes = [permissions.AllowAny]
-
-
-class UserCreate(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    # if uncommented any user has access to API
-    permission_classes = [permissions.AllowAny]
-
-
-class UserUpdate(generics.RetrieveUpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    # if uncommented any user has access to API
-    permission_classes = [permissions.AllowAny]
-
-
-class UserDelete(generics.DestroyAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
     # if uncommented any user has access to API
     permission_classes = [permissions.AllowAny]
 
@@ -170,7 +169,7 @@ class UsersInMeetingAdd(APIView):
             type=openapi.TYPE_OBJECT,
             required=['role', 'meeting'],
             properties={
-                'role': openapi.Schema(type=openapi.TYPE_INTEGER, enum=[1, 2, 3]),
+                'role': openapi.Schema(type=openapi.TYPE_INTEGER, enum=[0, 1, 2]),
                 'meeting': openapi.Schema(type=openapi.TYPE_INTEGER),
                 'password': openapi.Schema(type=openapi.TYPE_STRING),
             },
