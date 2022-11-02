@@ -19,8 +19,17 @@ class Meeting(models.Model):
 
 
 class MeetingImages(models.Model):
-    meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE, verbose_name='meeting')
-    image = models.ImageField(upload_to='meeting_images', verbose_name='meeting image', blank=True)
+    meeting = models.ForeignKey(
+        Meeting,
+        related_name='images',
+        on_delete=models.CASCADE,
+        verbose_name='meeting'
+    )
+    image = models.ImageField(
+        upload_to='meeting_images',
+        verbose_name='meeting image',
+        blank=True
+    )
 
     def __str__(self):
         return f'{self.meeting.name} image {self.id}'
@@ -37,9 +46,22 @@ class UsersInMeeting(models.Model):
         (GUEST, 'guest'),
     )
 
-    role = models.IntegerField(choices=NOTE, verbose_name='role')
-    meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    role = models.IntegerField(
+        choices=NOTE,
+        verbose_name='role'
+    )
+    meeting = models.ForeignKey(
+        Meeting,
+        related_name='users',
+        related_query_name='user',
+        on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        User,
+        related_name='meetings',
+        related_query_name='meeting',
+        on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return f'{self.meeting.name} users'
