@@ -4,6 +4,13 @@ from rest_framework.validators import UniqueTogetherValidator
 from meeting.models import Meeting, MeetingImages, UsersInMeeting, User
 
 
+class UserCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name', 'email']
+
+
 class MeetingCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -39,12 +46,6 @@ class MeetingRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meeting
         fields = ('__all__')
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = '__all__'
 
 
 class UsersInMeetingSerializer(serializers.ModelSerializer):
