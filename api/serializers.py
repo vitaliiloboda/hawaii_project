@@ -25,8 +25,16 @@ class MeetingImagesSerializer(serializers.ModelSerializer):
         fields = ['image']  # if needed all fields '__all__'
 
 
+class UsersInMeetingForMeeting(serializers.ModelSerializer):
+
+    class Meta:
+        model = UsersInMeeting
+        fields = ['user', 'role']
+
+
 class MeetingRetrieveSerializer(serializers.ModelSerializer):
     images = MeetingImagesSerializer(many=True)
+    users = UsersInMeetingForMeeting(many=True)
 
     class Meta:
         model = Meeting
