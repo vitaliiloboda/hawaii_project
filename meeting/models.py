@@ -36,12 +36,12 @@ class MeetingImages(models.Model):
 
 
 class UsersInMeeting(models.Model):
-    OWNER = 0
+    PROJECTOR = 0
     CAMERA = 1
     GUEST = 2
 
     NOTE = (
-        (OWNER, 'owner'),
+        (PROJECTOR, 'projector'),
         (CAMERA, 'camera'),
         (GUEST, 'guest'),
     )

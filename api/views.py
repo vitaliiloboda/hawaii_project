@@ -169,7 +169,11 @@ class UsersInMeetingAdd(APIView):
             type=openapi.TYPE_OBJECT,
             required=['role', 'meeting'],
             properties={
-                'role': openapi.Schema(type=openapi.TYPE_INTEGER, enum=[0, 1, 2]),
+                'role': openapi.Schema(
+                    type=openapi.TYPE_INTEGER,
+                    enum=[0, 1, 2],
+                    description='Выбор роли: \n 0 - проектор \n 1 - камера \n 2 - онлайн пользователь'
+                ),
                 'meeting': openapi.Schema(type=openapi.TYPE_INTEGER),
                 'password': openapi.Schema(type=openapi.TYPE_STRING),
             },
