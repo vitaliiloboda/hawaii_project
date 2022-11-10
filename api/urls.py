@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     MeetingImagesViewSet,
-    UsersInMeetingViewSet,
+    # UsersInMeetingViewSet,
     MeetingCreate,
     MeetingUpdate,
     MeetingList,
@@ -10,8 +10,8 @@ from .views import (
     MeetingImagesCreate,
     MeetingImagesDelete,
     MeetingImagesUpdate,
-    UsersInMeetingDelete,
-    UsersInMeetingUpdate,
+    # UsersInMeetingDelete,
+    # UsersInMeetingUpdate,
     # UserViewSet,
     UserCreate,
     # UserUpdate,
@@ -25,7 +25,7 @@ app_name = 'api'
 
 router = DefaultRouter()
 router.register('images', MeetingImagesViewSet, basename='images')
-router.register('users-in-meeting', UsersInMeetingViewSet, basename='users-in-meeting')
+# router.register('users-in-meeting', UsersInMeetingViewSet, basename='users-in-meeting')
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -42,8 +42,8 @@ urlpatterns = [
     path('images/update/<int:pk>', MeetingImagesUpdate.as_view()),
     path('images/delete/<int:pk>', MeetingImagesDelete.as_view()),
     # uim = users in meeting
-    path('uim/update/<int:pk>', UsersInMeetingUpdate.as_view()),
-    path('uim/delete/<int:pk>', UsersInMeetingDelete.as_view()),
+    # path('uim/update/<int:pk>', UsersInMeetingUpdate.as_view()),
+    # path('uim/delete/<int:pk>', UsersInMeetingDelete.as_view()),
 
     path('meeting/end/<int:pk>', MeetingEnd.as_view()),
 

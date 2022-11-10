@@ -128,25 +128,25 @@ class MeetingImagesDelete(generics.DestroyAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-class UsersInMeetingViewSet(viewsets.ModelViewSet):
-    serializer_class = UsersInMeetingSerializer
-    queryset = UsersInMeeting.objects.all()
-    # if uncommented any user has access to API
-    permission_classes = [permissions.AllowAny]
-
-
-class UsersInMeetingUpdate(generics.RetrieveUpdateAPIView):
-    queryset = UsersInMeeting.objects.all()
-    serializer_class = UsersInMeetingSerializer
-    # if uncommented any user has access to API
-    permission_classes = [permissions.AllowAny]
-
-
-class UsersInMeetingDelete(generics.DestroyAPIView):
-    queryset = UsersInMeeting.objects.all()
-    serializer_class = UsersInMeetingSerializer
-    # if uncommented any user has access to API
-    permission_classes = [permissions.AllowAny]
+# class UsersInMeetingViewSet(viewsets.ModelViewSet):
+#     serializer_class = UsersInMeetingSerializer
+#     queryset = UsersInMeeting.objects.all()
+#     # if uncommented any user has access to API
+#     permission_classes = [permissions.AllowAny]
+#
+#
+# class UsersInMeetingUpdate(generics.RetrieveUpdateAPIView):
+#     queryset = UsersInMeeting.objects.all()
+#     serializer_class = UsersInMeetingSerializer
+#     # if uncommented any user has access to API
+#     permission_classes = [permissions.AllowAny]
+#
+#
+# class UsersInMeetingDelete(generics.DestroyAPIView):
+#     queryset = UsersInMeeting.objects.all()
+#     serializer_class = UsersInMeetingSerializer
+#     # if uncommented any user has access to API
+#     permission_classes = [permissions.AllowAny]
 
 
 class MeetingEnd(APIView):
