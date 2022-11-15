@@ -50,8 +50,8 @@ class ProjectorConsumer(WebsocketConsumer):
 
     """
     def connect(self):
-        self.meeting_id = self.scope['url_routes']['kwargs']['meeting_id']
-        self.group_name = f'camera_{self.meeting_id}'
+        self.meeting_id = self.scope['url_route']['kwargs']['meeting_id']
+        self.group_name = f'projector_{self.meeting_id}'
         self.images = {}
 
         async_to_sync(self.channel_layer.group_add)(self.group_name, self.channel_name)
@@ -67,19 +67,21 @@ class ProjectorConsumer(WebsocketConsumer):
     def distant_images(self, event):
         self.images[event['channel']] = event['frame']
         images = list(self.images.values())
-        pprint(self.images.values())
+        # pprint(self.images.values())
+        final_image = None
         for i, image in enumerate(images):
             im_arr = np.frombuffer(image, dtype=np.uint8)
             img = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
             if i == 0:
                 final_image = img
             else:
-                final_image = cv2.addWeighted(final_image, 1, img, 1, 0)
-        cv2.imwrite('1.png', final_image)
-        _, im_arr = cv2.imencode('.png', img)  # im_arr: image in Numpy one-dim array format.
-        im_bytes = im_arr.tobytes()
-        im_b64 = base64.b64encode(im_bytes)
-        self.send(im_b64)
+                final_image = cv2.addWeighted(final_image, 1, img, 1, 1)
+            cv2.imwrite(f'{i}.png', img)
+        cv2.imwrite('1555.png', final_image)
+        _, im_arr = cv2.imencode('.png', final_image)  # im_arr: image in Numpy one-dim array format.
+        # im_bytes = im_arr.tobytes()
+        im_b64 = base64.b64encode(im_arr).decode('ascii')
+        self.send('data:image/png;base64,' + im_b64)
 
 
 class DistantConsumer(WebsocketConsumer):
@@ -111,11 +113,11 @@ class DistantConsumer(WebsocketConsumer):
         byte_data = base64.urlsafe_b64decode(text_data.split(',')[1])
         # byte_data = base64.b64decode(text_data)
         # print(bdata)
-        # with open(f'{datetime.now().strftime("%H-%M-%S")}.png', 'wb') as f:
-        #     f.write(bdata)
+        with open(f'{datetime.now().strftime("%H-%M-%S")}.png', 'wb') as f:
+            f.write(byte_data)
 
         async_to_sync(self.channel_layer.group_send)(
-            self.distant_group_name,
+            self.projector_group_name,
             {
                 'type': 'distant_images',
                 'frame': byte_data,
