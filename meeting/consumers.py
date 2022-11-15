@@ -1,5 +1,7 @@
 from pprint import pprint
 import base64
+import numpy as np
+import cv2
 from datetime import datetime
 
 from channels.generic.websocket import WebsocketConsumer
@@ -17,6 +19,7 @@ class CameraConsumer(WebsocketConsumer):
         self.camera_group_name = f'camera_{self.meeting_id}'
         # self.projector_group_name = f'projector_{self.meeting_id}'
         self.distant_group_name = f'distant_{self.meeting_id}'
+        self.images = {}
 
         async_to_sync(self.channel_layer.group_add)(self.camera_group_name, self.channel_name)
 
@@ -28,10 +31,10 @@ class CameraConsumer(WebsocketConsumer):
 
     def receive(self, text_data=None, bytes_data=None):
         # pprint(text_data)
-        bdata = base64.urlsafe_b64decode(text_data.split(',')[1])
+        # bdata = base64.urlsafe_b64decode(text_data.split(',')[1])
         # print(type(bdata))
-        with open(f'{datetime.now().strftime("%H-%M-%S")}.jpg', 'wb') as f:
-            f.write(bdata)
+        # with open(f'{datetime.now().strftime("%H-%M-%S")}.jpg', 'wb') as f:
+        #     f.write(bdata)
         print(f'Получены данные камеры в встрече {self.camera_group_name} Отправляю пользователям {self.distant_group_name}')
         async_to_sync(self.channel_layer.group_send)(
             self.distant_group_name,
@@ -42,7 +45,6 @@ class CameraConsumer(WebsocketConsumer):
         )
 
 
-
 class ProjectorConsumer(WebsocketConsumer):
     """ Консьюмер, получающий данные от пользователя, запустившего приложение в режиме проектора
 
@@ -50,6 +52,7 @@ class ProjectorConsumer(WebsocketConsumer):
     def connect(self):
         self.meeting_id = self.scope['url_routes']['kwargs']['meeting_id']
         self.group_name = f'camera_{self.meeting_id}'
+        self.images = {}
 
         async_to_sync(self.channel_layer.group_add)(self.group_name, self.channel_name)
 
@@ -60,6 +63,23 @@ class ProjectorConsumer(WebsocketConsumer):
 
     def receive(self, text_data=None, bytes_data=None):
         pass
+
+    def distant_images(self, event):
+        self.images[event['channel']] = event['frame']
+        images = list(self.images.values())
+        pprint(self.images.values())
+        for i, image in enumerate(images):
+            im_arr = np.frombuffer(image, dtype=np.uint8)
+            img = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
+            if i == 0:
+                final_image = img
+            else:
+                final_image = cv2.addWeighted(final_image, 1, img, 1, 0)
+        cv2.imwrite('1.png', final_image)
+        _, im_arr = cv2.imencode('.png', img)  # im_arr: image in Numpy one-dim array format.
+        im_bytes = im_arr.tobytes()
+        im_b64 = base64.b64encode(im_bytes)
+        self.send(im_b64)
 
 
 class DistantConsumer(WebsocketConsumer):
@@ -88,13 +108,21 @@ class DistantConsumer(WebsocketConsumer):
         # print(type(bdata))
         # text_data = text_data + '=' * (-len(text_data) % 4)
         # print(text_data)
-        bdata = base64.urlsafe_b64decode(text_data.split(',')[1])
-        # bdata = base64.b64decode(text_data)
+        byte_data = base64.urlsafe_b64decode(text_data.split(',')[1])
+        # byte_data = base64.b64decode(text_data)
         # print(bdata)
-        with open(f'{datetime.now().strftime("%H-%M-%S")}.png', 'wb') as f:
-            f.write(bdata)
+        # with open(f'{datetime.now().strftime("%H-%M-%S")}.png', 'wb') as f:
+        #     f.write(bdata)
+
+        async_to_sync(self.channel_layer.group_send)(
+            self.distant_group_name,
+            {
+                'type': 'distant_images',
+                'frame': byte_data,
+                'channel': self.channel_name,
+            }
+        )
 
     def video_frame(self, event):
-        print('1')
         frame = event['frame']
         self.send(frame)
