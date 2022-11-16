@@ -4,6 +4,9 @@ import numpy as np
 import cv2
 from datetime import datetime
 
+from io import BytesIO
+import PIL
+
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 
@@ -68,19 +71,34 @@ class ProjectorConsumer(WebsocketConsumer):
         self.images[event['channel']] = event['frame']
         images = list(self.images.values())
         # pprint(self.images.values())
-        final_image = None
+        # final_image = None
+        final_image = PIL.Image.new('RGBA', (498, 498), (0, 0, 0, 0))
+        final_image.save('finalstart.png')
         for i, image in enumerate(images):
-            im_arr = np.frombuffer(image, dtype=np.uint8)
-            img = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
-            if i == 0:
-                final_image = img
-            else:
-                final_image = cv2.addWeighted(final_image, 1, img, 1, 1)
-            cv2.imwrite(f'{i}.png', img)
-        cv2.imwrite('1555.png', final_image)
-        _, im_arr = cv2.imencode('.png', final_image)  # im_arr: image in Numpy one-dim array format.
+            # im_arr = np.frombuffer(image, dtype=np.uint8)
+            # img = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
+            im_file = BytesIO(image)
+            img = PIL.Image.open(im_file)
+            img.save(f'{i}.png')
+            pprint(img.__dict__)
+            final_image.paste(img, (0, 0, 498, 498), img)
+            final_image.save(f'final_{i}.png')
+            # if i == 0:
+            #     final_image = img
+            # else:
+            #     final_image = cv2.addWeighted(final_image, 1, img, 1, 1)
+
+        #     cv2.imwrite(f'{i}.png', img)
+        # cv2.imwrite('1555.png', final_image)
+        # _, im_arr = cv2.imencode('.png', final_image)  # im_arr: image in Numpy one-dim array format.
         # im_bytes = im_arr.tobytes()
-        im_b64 = base64.b64encode(im_arr).decode('ascii')
+        final_image.save('final_final.png')
+        im_file = BytesIO()
+        final_image.save(im_file, format="PNG")
+        im_bytes = im_file.getvalue()  # im_bytes: image in binary format.
+        # im_b64 = base64.b64encode(im_bytes)
+
+        im_b64 = base64.b64encode(im_bytes).decode('ascii')
         self.send('data:image/png;base64,' + im_b64)
 
 
