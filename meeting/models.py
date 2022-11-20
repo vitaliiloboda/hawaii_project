@@ -33,6 +33,12 @@ class Meeting(models.Model):
         User,
         related_name='meetings'
     )
+    camera_occupied = models.BooleanField(
+        default=False,
+    )
+    projector_occupied = models.BooleanField(
+        default=False,
+    )
 
     def __str__(self):
         return self.name
