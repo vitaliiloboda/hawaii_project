@@ -46,3 +46,11 @@ class MeetingRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meeting
         fields = ('__all__')
+
+
+class MeetingAddSelfSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Meeting
+        fields = ['id', 'users']
+

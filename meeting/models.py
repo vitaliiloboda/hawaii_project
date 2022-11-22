@@ -31,7 +31,7 @@ class Meeting(models.Model):
     )
     users = models.ManyToManyField(
         User,
-        related_name='meetings'
+        related_name='meetings',
     )
     camera_occupied = models.BooleanField(
         default=False,

@@ -18,7 +18,7 @@ from .views import (
     # UserDelete,
     MeetingEnd,
     MeetingRetrieve,
-    UsersInMeetingAdd,
+    AddSelfInMeetingView,
 )
 
 app_name = 'api'
@@ -35,7 +35,7 @@ urlpatterns = [
     path('meeting/<int:pk>/', MeetingRetrieve.as_view()),
     # path('meeting/update/<int:pk>', MeetingUpdate.as_view()),
     # path('meeting/delete/<int:pk>', MeetingDelete.as_view()),
-    path('meeting/add_user/', UsersInMeetingAdd.as_view()),
+    path('meeting/add_self/<int:pk>', AddSelfInMeetingView.as_view()),
     # path('user/update/<int:pk>', UserUpdate.as_view()),
     # path('user/delete/<int:pk>', UserDelete.as_view()),
     # path('images/create/', MeetingImagesCreate.as_view()),

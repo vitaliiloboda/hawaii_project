@@ -5,15 +5,14 @@ from django.shortcuts import render
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
 from requests import Response
 from rest_framework import viewsets, generics
 from .serializers import (MeetingSerializer,
                           MeetingCreateSerializer,
                           MeetingRetrieveSerializer,
                           MeetingImagesSerializer,
-                          UsersInMeetingSerializer,
-                          UserCreateSerializer)
+                          UserCreateSerializer, MeetingAddSelfSerializer)
 from meeting.models import Meeting, MeetingImages, User
 from rest_framework import permissions
 from rest_framework.views import APIView
@@ -160,37 +159,43 @@ class MeetingEnd(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class UsersInMeetingAdd(APIView):
-    serializer_class = UsersInMeetingSerializer
-    queryset = UsersInMeeting.objects.all()
+# class UsersInMeetingAdd(APIView):
+#     serializer_class = UsersInMeetingSerializer
+#     queryset = UsersInMeeting.objects.all()
 
-    @swagger_auto_schema(
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            required=['role', 'meeting'],
-            properties={
-                'role': openapi.Schema(
-                    type=openapi.TYPE_INTEGER,
-                    enum=[0, 1, 2],
-                    description='Выбор роли: \n 0 - проектор \n 1 - камера \n 2 - онлайн пользователь'
-                ),
-                'meeting': openapi.Schema(type=openapi.TYPE_INTEGER),
-                'password': openapi.Schema(type=openapi.TYPE_STRING),
-            },
-        ),
-    )
-    def post(self, request):
-        # request.data._mutable = True
-        request.data['user'] = str(request.user.id)
-        # request.data._mutable = False
-        serializer = UsersInMeetingSerializer(data=request.data)
-        if serializer.is_valid():
-            try:
-                if serializer.validated_data['meeting'].password == request.data['password']:
-                    serializer.save()
-                    return Response(serializer.data, status=status.HTTP_201_CREATED)
-                else:
-                    return Response(status=status.HTTP_403_FORBIDDEN)
-            except KeyError:
-                Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # @swagger_auto_schema(
+    #     request_body=openapi.Schema(
+    #         type=openapi.TYPE_OBJECT,
+    #         required=['role', 'meeting'],
+    #         properties={
+    #             'role': openapi.Schema(
+    #                 type=openapi.TYPE_INTEGER,
+    #                 enum=[0, 1, 2],
+    #                 description='Выбор роли: \n 0 - проектор \n 1 - камера \n 2 - онлайн пользователь'
+    #             ),
+    #             'meeting': openapi.Schema(type=openapi.TYPE_INTEGER),
+    #             'password': openapi.Schema(type=openapi.TYPE_STRING),
+    #         },
+    #     ),
+    # )
+    # def post(self, request):
+    #     request.data['user'] = str(request.user.id)
+    #     serializer = UsersInMeetingSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         try:
+    #             if serializer.validated_data['meeting'].password == request.data['password']:
+    #                 serializer.save()
+    #                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #             else:
+    #                 return Response(status=status.HTTP_403_FORBIDDEN)
+    #         except KeyError:
+    #             Response(status=status.HTTP_400_BAD_REQUEST)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AddSelfInMeetingView(APIView):
+    serializer_class = MeetingAddSelfSerializer
+    queryset = Meeting.objects.all()
+
+    def post(self, request, pk):
+        request.data['users'] = str(request.user.id)
