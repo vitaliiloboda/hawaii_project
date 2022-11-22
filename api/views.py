@@ -16,7 +16,8 @@ from .serializers import (
     UserCreateSerializer,
     MeetingAddSelfSerializer
 )
-from meeting.models import Meeting, MeetingImages, User
+from django.contrib.auth.models import User
+from meeting.models import Meeting, MeetingImages
 from rest_framework import permissions
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404

@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import User
 
-from meeting.models import Meeting, MeetingImages, User
+from meeting.models import Meeting, MeetingImages
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
