@@ -8,11 +8,14 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
 from requests import Response
 from rest_framework import viewsets, generics
-from .serializers import (MeetingSerializer,
-                          MeetingCreateSerializer,
-                          MeetingRetrieveSerializer,
-                          MeetingImagesSerializer,
-                          UserCreateSerializer, MeetingAddSelfSerializer)
+from .serializers import (
+    MeetingSerializer,
+    MeetingCreateSerializer,
+    MeetingRetrieveSerializer,
+    MeetingImagesSerializer,
+    UserCreateSerializer,
+    MeetingAddSelfSerializer
+)
 from meeting.models import Meeting, MeetingImages, User
 from rest_framework import permissions
 from rest_framework.views import APIView
@@ -54,9 +57,8 @@ class MeetingCreate(generics.CreateAPIView):
 
     def post(self, request):
         print(self.request.user)
-        # request.data._mutable = True
         request.data['owner'] = str(request.user.id)
-        # request.data._mutable = False
+        request.data['users'] = [request.user.id]
         serializer = MeetingSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -193,9 +195,34 @@ class MeetingEnd(APIView):
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AddSelfInMeetingView(APIView):
+class AddSelfInMeetingView(UpdateAPIView):
     serializer_class = MeetingAddSelfSerializer
     queryset = Meeting.objects.all()
 
-    def post(self, request, pk):
-        request.data['users'] = str(request.user.id)
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_STRING,
+            description='Метод не поддерживается',
+        ),
+    )
+    def put(self, pk):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['password'],
+            properties={
+                'password': openapi.Schema(type=openapi.TYPE_STRING),
+            },
+        ),
+    )
+    def patch(self, request, pk):
+        meeting = self.get_object()
+        request.data['users'] = [request.user.id]
+        for user in meeting.users.all():
+            request.data['users'].append(user.id)
+        if request.data.pop('password') == meeting.password:
+            return self.partial_update(request, pk)
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)
