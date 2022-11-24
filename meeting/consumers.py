@@ -10,6 +10,8 @@ import PIL
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 
+from .models import Meeting
+
 
 class CameraConsumer(WebsocketConsumer):
     """ Консьюмер, получающий данные от пользователя, запустившего приложение в режиме камеры
@@ -19,18 +21,22 @@ class CameraConsumer(WebsocketConsumer):
     def connect(self):
 
         self.meeting_id = self.scope['url_route']['kwargs']['meeting_id']
-        self.camera_group_name = f'camera_{self.meeting_id}'
-        # self.projector_group_name = f'projector_{self.meeting_id}'
-        self.distant_group_name = f'distant_{self.meeting_id}'
-        self.images = {}
-
-        async_to_sync(self.channel_layer.group_add)(self.camera_group_name, self.channel_name)
-
-        self.accept()
+        self.meeting = Meeting.objects.get(pk=self.meeting_id)
+        if not self.meeting.camera_occupied:
+            self.camera_group_name = f'camera_{self.meeting_id}'
+            # self.projector_group_name = f'projector_{self.meeting_id}'
+            self.distant_group_name = f'distant_{self.meeting_id}'
+            self.images = {}
+            async_to_sync(self.channel_layer.group_add)(self.camera_group_name, self.channel_name)
+            self.meeting.set_camera_occupied_true()
+            self.accept()
+        else:
+            self.send({"error": f"camera in meeting {self.meeting_id} already occupied."})
 
     def disconnect(self, close_code):
-
+        self.meeting.set_camera_occupied_false()
         async_to_sync(self.channel_layer.group_discard)(self.camera_group_name, self.channel_name)
+
 
     def receive(self, text_data=None, bytes_data=None):
         # pprint(text_data)
