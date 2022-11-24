@@ -14,7 +14,8 @@ from .serializers import (
     MeetingRetrieveSerializer,
     MeetingImagesSerializer,
     UserCreateSerializer,
-    MeetingAddSelfSerializer
+    MeetingAddSelfSerializer,
+    MeetingListSerializer,
 )
 from meeting.models import Meeting, MeetingImages, User
 from rest_framework import permissions
@@ -68,10 +69,10 @@ class MeetingCreate(generics.CreateAPIView):
 
 class MeetingList(ListAPIView):
     queryset = Meeting.objects.all()
-    serializer_class = MeetingSerializer
+    serializer_class = MeetingListSerializer
 
     def get_queryset(self):
-        queryset = Meeting.objects.filter(user__user=self.request.user)
+        queryset = Meeting.objects.filter(users=self.request.user)
         return queryset
 
 
@@ -81,7 +82,8 @@ class MeetingRetrieve(RetrieveAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        if not instance.users.filter(user=self.request.user):
+        # if not instance.users.filter(user=self.request.user):
+        if not self.request.user in instance.users.all():
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = self.get_serializer(instance)
         return Response(serializer.data)

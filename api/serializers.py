@@ -19,7 +19,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password']
-        write_only_fields = ['password']
+        extra_kwargs = {'password': {'write_only': True}}
 
 
 class MeetingCreateSerializer(serializers.ModelSerializer):
@@ -33,7 +33,15 @@ class MeetingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Meeting
-        fields = ('__all__')
+        fields = ['__all__']
+        extra_kwargs = {'password': {'write_only': True}}
+
+
+class MeetingListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Meeting
+        fields = ['id', 'name', 'owner', 'end_time']
 
 
 class MeetingImagesSerializer(serializers.ModelSerializer):
@@ -57,6 +65,7 @@ class MeetingRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meeting
         fields = ('__all__')
+        extra_kwargs = {'password': {'write_only': True}}
 
 
 class MeetingAddSelfSerializer(serializers.ModelSerializer):
