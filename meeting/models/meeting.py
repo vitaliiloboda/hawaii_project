@@ -47,24 +47,18 @@ class Meeting(models.Model):
         self.end_time = datetime.now()
         self.save()
 
+    def set_camera_occupied_false(self):
+        self.camera_occupied = False
+        self.save()
 
-class MeetingImages(models.Model):
-    meeting = models.ForeignKey(
-        Meeting,
-        related_name='images',
-        on_delete=models.CASCADE,
-        verbose_name='meeting'
-    )
-    image = models.ImageField(
-        upload_to='meeting_images',
-        verbose_name='meeting image',
-        blank=True
-    )
+    def set_camera_occupied_true(self):
+        self.camera_occupied = True
+        self.save()
 
-    def __str__(self):
-        return f'{self.meeting.name} image {self.id}'
+    def set_projector_occupied_false(self):
+        self.projector_occupied = False
+        self.save()
 
-
-class Layer(models.Model):
-    meeting = models.ForeignKey(Meeting, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='meeting_layers', verbose_name='meeting layer', blank=True)
+    def set_projector_occupied_true(self):
+        self.projector_occupied = True
+        self.save()
