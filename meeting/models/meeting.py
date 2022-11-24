@@ -47,10 +47,18 @@ class Meeting(models.Model):
         self.end_time = datetime.now()
         self.save()
 
-    def switch_camera_status(self):
-        self.camera_occupied = not self.camera_occupied
+    def set_camera_occupied_false(self):
+        self.camera_occupied = False
         self.save()
 
-    def switch_projector_status(self):
-        self.projector_occupied = not self.projector_occupied
+    def set_camera_occupied_true(self):
+        self.camera_occupied = True
+        self.save()
+
+    def set_projector_occupied_false(self):
+        self.projector_occupied = False
+        self.save()
+
+    def set_projector_occupied_true(self):
+        self.projector_occupied = True
         self.save()
