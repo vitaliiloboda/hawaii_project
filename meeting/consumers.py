@@ -31,7 +31,8 @@ class CameraConsumer(WebsocketConsumer):
             self.meeting.set_camera_occupied_true()
             self.accept()
         else:
-            self.send({"error": f"camera in meeting {self.meeting_id} already occupied."})
+            self.accept()
+            self.send(f"camera in meeting {self.meeting_id} already occupied.")
 
     def disconnect(self, close_code):
         self.meeting.set_camera_occupied_false()
@@ -60,12 +61,19 @@ class ProjectorConsumer(WebsocketConsumer):
     """
     def connect(self):
         self.meeting_id = self.scope['url_route']['kwargs']['meeting_id']
-        self.group_name = f'projector_{self.meeting_id}'
-        self.images = {}
+        self.meeting = Meeting.objects.get(pk=self.meeting_id)
+        if not self.meeting.projector_occupied:
+            self.meeting.set_projector_occupied_true()
+            self.group_name = f'projector_{self.meeting_id}'
+            self.images = {}
 
-        async_to_sync(self.channel_layer.group_add)(self.group_name, self.channel_name)
+            async_to_sync(self.channel_layer.group_add)(self.group_name, self.channel_name)
 
-        self.accept()
+            self.accept()
+        else:
+            self.accept()
+            self.send(f"projector in meeting {self.meeting_id} already occupied.")
+
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(self.group_name, self.channel_name)
