@@ -28,6 +28,7 @@ class CameraConsumer(WebsocketConsumer):
             async_to_sync(self.channel_layer.group_add)(self.camera_group_name, self.channel_name)
             self.meeting.set_camera_occupied_true()
             self.accept()
+            print('Подключен пользователь ' + self.scope['user'].username)
         else:
             self.accept()
             self.send(f"camera in meeting {self.meeting_id} already occupied.")
