@@ -16,22 +16,32 @@ class CameraConsumer(WebsocketConsumer):
 
     """
 
+    def __init__(self):
+        super().__init__()
+        self.camera_connected = False
+
     def connect(self):
         self.meeting_id = self.scope['url_route']['kwargs']['meeting_id']
         self.meeting = Meeting.objects.get(pk=self.meeting_id)
-        if not self.meeting.camera_occupied:
-            self.camera_connected = True
-            self.camera_group_name = f'camera_{self.meeting_id}'
-            # self.projector_group_name = f'projector_{self.meeting_id}'
-            self.distant_group_name = f'distant_{self.meeting_id}'
-            self.images = {}
-            async_to_sync(self.channel_layer.group_add)(self.camera_group_name, self.channel_name)
-            self.meeting.set_camera_occupied_true()
-            self.accept()
-            print('Подключен пользователь ' + self.scope['user'].username)
+        if self.scope['user'] in self.meeting.users.all():
+            if not self.meeting.camera_occupied:
+                self.camera_connected = True
+                self.camera_group_name = f'camera_{self.meeting_id}'
+                # self.projector_group_name = f'projector_{self.meeting_id}'
+                self.distant_group_name = f'distant_{self.meeting_id}'
+                self.images = {}
+                async_to_sync(self.channel_layer.group_add)(self.camera_group_name, self.channel_name)
+                self.meeting.set_camera_occupied_true()
+                self.accept()
+                print('Подключен пользователь ' + self.scope['user'].username + ' как камера')
+            else:
+                self.accept()
+                self.send(f"ERROR: camera in meeting {self.meeting_id} already occupied.")
+                self.close()
         else:
             self.accept()
-            self.send(f"camera in meeting {self.meeting_id} already occupied.")
+            self.send('ERROR: You have no access to this meeting!')
+            self.close()
 
     def disconnect(self, close_code):
         if self.camera_connected:
@@ -59,19 +69,30 @@ class ProjectorConsumer(WebsocketConsumer):
     """ Консьюмер, получающий данные от пользователя, запустившего приложение в режиме проектора
 
     """
+
+    def __init__(self):
+        super().__init__()
+        self.projector_connected = False
+
     def connect(self):
         self.meeting_id = self.scope['url_route']['kwargs']['meeting_id']
         self.meeting = Meeting.objects.get(pk=self.meeting_id)
-        if not self.meeting.projector_occupied:
-            self.projector_connected = True
-            self.meeting.set_projector_occupied_true()
-            self.group_name = f'projector_{self.meeting_id}'
-            self.images = {}
-            async_to_sync(self.channel_layer.group_add)(self.group_name, self.channel_name)
-            self.accept()
+        if self.scope['user'] in self.meeting.users.all():
+            if not self.meeting.projector_occupied:
+                self.projector_connected = True
+                self.meeting.set_projector_occupied_true()
+                self.group_name = f'projector_{self.meeting_id}'
+                self.images = {}
+                async_to_sync(self.channel_layer.group_add)(self.group_name, self.channel_name)
+                print('Подключен пользователь ' + self.scope['user'].username + ' как проектор')
+                self.accept()
+            else:
+                self.accept()
+                self.send(f"projector in meeting {self.meeting_id} already occupied.")
         else:
             self.accept()
-            self.send(f"projector in meeting {self.meeting_id} already occupied.")
+            self.send('ERROR: You have no access to this meeting!')
+            self.close()
 
     def disconnect(self, close_code):
         if self.projector_connected:
@@ -123,20 +144,30 @@ class DistantConsumer(WebsocketConsumer):
     """
 
     def connect(self):
-        # pprint(self.channel_layer)
-        # pprint(self.scope['user'].__dict__)
         self.meeting_id = self.scope['url_route']['kwargs']['meeting_id']
-        self.camera_group_name = f'camera_{self.meeting_id}'
-        self.projector_group_name = f'projector_{self.meeting_id}'
-        self.distant_group_name = f'distant_{self.meeting_id}'
+        self.meeting = Meeting.objects.get(pk=self.meeting_id)
+        if self.scope['user'] in self.meeting.users.all():
+            # pprint(self.channel_layer)
+            # pprint(self.scope['user'].__dict__)
+            self.connected = True
 
-        async_to_sync(self.channel_layer.group_add)(self.distant_group_name, self.channel_name)
+            self.camera_group_name = f'camera_{self.meeting_id}'
+            self.projector_group_name = f'projector_{self.meeting_id}'
+            self.distant_group_name = f'distant_{self.meeting_id}'
 
-        self.accept()
+            async_to_sync(self.channel_layer.group_add)(self.distant_group_name, self.channel_name)
+            print('Подключен пользователь ' + self.scope['user'].username + ' как онлайн пользователь')
+            self.accept()
+        else:
+            self.connected = False
+            self.accept()
+            self.send('ERROR: You have no access to this meeting!')
+            self.close()
 
     def disconnect(self, close_code):
-        pprint(close_code)
-        async_to_sync(self.channel_layer.group_discard)(self.camera_group_name, self.channel_name)
+        if self.connected:
+            pprint(close_code)
+            async_to_sync(self.channel_layer.group_discard)(self.camera_group_name, self.channel_name)
 
     def receive(self, text_data=None, bytes_data=None):
         # pprint(text_data)
