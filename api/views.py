@@ -154,8 +154,6 @@ class MeetingRetrieve(RetrieveAPIView):
 
 
 class MeetingEnd(APIView):
-    # if uncommented any user has access to API
-    permission_classes = [permissions.AllowAny]
 
     def post(self, request, pk):
         meeting_id = pk
