@@ -61,7 +61,8 @@ class MeetingCreate(generics.CreateAPIView):
         print(self.request.user)
         request.data['owner'] = str(request.user.id)
         request.data['users'] = [request.user.id]
-        serializer = MeetingSerializer(data=request.data)
+        pprint(request.data)
+        serializer = MeetingCreateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
