@@ -14,12 +14,14 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
 
-import meeting.routing
-from .token_auth_middleware import JwtAuthMiddleware
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hawaii_project.settings')
 
 django_asgi_app = get_asgi_application()
+
+import meeting.routing
+from .token_auth_middleware import JwtAuthMiddleware
+
+
 
 application = ProtocolTypeRouter({
     'http': django_asgi_app,

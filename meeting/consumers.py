@@ -22,6 +22,9 @@ class CameraConsumer(WebsocketConsumer):
 
     def connect(self):
         self.meeting_id = self.scope['url_route']['kwargs']['meeting_id']
+        print(self.meeting_id)
+        pprint(Meeting.objects.all())
+        pprint(self.scope['user'])
         self.meeting = Meeting.objects.get(pk=self.meeting_id)
         if self.scope['user'] in self.meeting.users.all():
             if not self.meeting.camera_occupied:
